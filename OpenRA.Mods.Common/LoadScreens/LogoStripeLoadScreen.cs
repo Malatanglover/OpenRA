@@ -18,10 +18,14 @@ namespace OpenRA.Mods.Common.LoadScreens
 {
 	public sealed class LogoStripeLoadScreen : SheetLoadScreen
 	{
+#if !DEBUG_ON
+		Rectangle bgRect;
+		Sprite background;
+#else
 		Rectangle stripeRect;
 		float2 logoPos;
 		Sprite stripe, logo;
-
+#endif
 		Sheet lastSheet;
 		int lastDensity;
 		Size lastResolution;
@@ -42,23 +46,34 @@ namespace OpenRA.Mods.Common.LoadScreens
 			{
 				lastSheet = s;
 				lastDensity = density;
+#if !DEBUG_ON
+				background = CreateSprite(s, new Rectangle(0, 0, s.Size.Width, s.Size.Height), r.Resolution);
+#else
 				logo = CreateSprite(s, density, new Rectangle(0, 0, 256, 256));
 				stripe = CreateSprite(s, density, new Rectangle(258, 0, 253, 256));
+#endif
 			}
 
 			if (r.Resolution != lastResolution)
 			{
 				lastResolution = r.Resolution;
+#if !DEBUG_ON
+				bgRect = new Rectangle(0, 0, lastResolution.Width, lastResolution.Height);
+#else
 				stripeRect = new Rectangle(0, lastResolution.Height / 2 - 128, lastResolution.Width, 256);
 				logoPos = new float2(lastResolution.Width / 2 - 128, lastResolution.Height / 2 - 128);
+#endif
 			}
-
+#if !DEBUG_ON
+			if (background != null)
+				WidgetUtils.FillRectWithSprite(bgRect, background);
+#else
 			if (stripe != null)
 				WidgetUtils.FillRectWithSprite(stripeRect, stripe);
 
 			if (logo != null)
 				r.RgbaSpriteRenderer.DrawSprite(logo, logoPos);
-
+#endif
 			if (r.Fonts != null)
 			{
 				var text = messages.Random(Game.CosmeticRandom);

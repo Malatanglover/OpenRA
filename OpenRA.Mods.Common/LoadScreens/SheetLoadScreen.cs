@@ -90,7 +90,12 @@ namespace OpenRA.Mods.Common.LoadScreens
 		{
 			return new Sprite(s, density * rect, TextureChannel.RGBA, 1f / density);
 		}
-
+#if !DEBUG_ON
+		protected static Sprite CreateSprite(Sheet s, Rectangle rect, Size size)
+		{
+			return new Sprite(s, rect, TextureChannel.RGBA, size, BlendMode.Alpha);
+		}
+#endif
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

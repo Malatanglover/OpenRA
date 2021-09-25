@@ -289,10 +289,15 @@ namespace OpenRA
 		public static RunStatus InitializeAndRun(string[] args)
 		{
 			Initialize(new Arguments(args));
-
+#if DEBUG_ON
+			// Debug by Xiaopi
+			Thread.Sleep(15);
+			return RunStatus.Error;
+#else
 			// Proactively collect memory during loading to reduce peak memory.
 			GC.Collect();
 			return Run();
+#endif
 		}
 
 		static void Initialize(Arguments args)
@@ -465,7 +470,11 @@ namespace OpenRA
 			Sound.StopVideo();
 
 			ModData = new ModData(Mods[mod], Mods, true);
-
+#if DEBUG_ON
+			// Debug by Xiaopi
+			Thread.Sleep(15 * 1000);
+			return ;
+#else
 			LocalPlayerProfile = new LocalPlayerProfile(Path.Combine(Platform.SupportDir, Settings.Game.AuthProfile), ModData.Manifest.Get<PlayerDatabase>());
 
 			if (!ModData.LoadScreen.BeforeLoad())
@@ -497,6 +506,7 @@ namespace OpenRA
 			JoinLocal();
 
 			ModData.LoadScreen.StartGame(args);
+#endif
 		}
 
 		public static void LoadEditor(string mapUid)
